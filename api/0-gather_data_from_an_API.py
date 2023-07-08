@@ -1,29 +1,45 @@
 #!/usr/bin/python3
-""" Calls an API in order to get completed tasks """
+""" just using some extra modules """
 import requests
 import sys
 
 
-if __name__ == '__main__':
-    userId = sys.argv[1]
-    url_todo = 'https://jsonplaceholder.typicode.com/users/1/todos/'
-    url_user = 'https://jsonplaceholder.typicode.com/users'
-    todo = requests.get(url_todo, params={'userId': userId})
-    user = requests.get(url_user, params={'id': userId})
+def getName():
+    """ getting user name """
+    payload = {'id': sys.argv[1]}
+    dataTwo = requests.get('https://jsonplaceholder.typicode.com/users',
+                           params=payload)
+    JDataTwo = dataTwo.json()
+    # print(JDataTwo[0]['name']
+    return JDataTwo[0]['name']
 
-    todo_dict_list = todo.json()
-    user_dict_list = user.json()
 
-    completed_tasks = []
-    total_tasks = len(todo_dict_list)
-    employee = user_dict_list[0].get('name')
-
-    for task in todo_dict_list:
-        if task['completed']:
-            completed_tasks.append(task)
-
+def getTask():
+    """ get task numbers and todos done  """
+    data = requests.get('https://jsonplaceholder.typicode.com/todos')
+    ToDoList = []
+    taskToDo = 0
+    taskDone = 0
+    JData = data.json()
+    DataLength = len(JData)
+    for i in range(0, DataLength):
+        com = int(sys.argv[1])
+        if JData[i]['userId'] == com:
+            taskToDo += 1
+            if JData[i]['completed'] is True:
+                ToDoList.append(JData[i]['title'])
+                taskDone += 1
+    # print(taskToDo)
+    # print(taskDone)
+    # print(ToDoList)
     print("Employee {} is done with tasks({}/{}):"
-          .format(employee, len(completed_tasks), total_tasks))
+          .format(getName(), taskDone, taskToDo))
+    Lvalue = len(ToDoList)
+    for j in range(0, Lvalue):
+        print("\t {}".format(ToDoList[j]))
 
-    for task in completed_tasks:
-        print("\t {}".format(task.get('title')))
+""" addding docs everywhre """
+
+if __name__ == "__main__":
+    """ calling """
+    getTask()
